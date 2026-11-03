@@ -11,6 +11,7 @@ import {
   DisconnectReason,
   MediaDeviceFailure,
   type RoomOptions,
+  ScreenSharePresets,
   VideoPresets,
 } from 'livekit-client'
 import { getMediaDeviceFailure } from '@/features/rooms/livekit/utils/mediaPermissions'
@@ -131,6 +132,12 @@ export const Conference = ({
       dynacast: true,
       publishDefaults: {
         videoCodec: apiConfig?.livekit.default_video_codec ?? 'vp9',
+        // Without this, LiveKit's own preset-matching picks h1080fps15 (2.5Mbps/15fps)
+        // for any screen share between 1281-1920px wide, since that preset sits before
+        // h1080fps30 in ScreenSharePresets and the matching loop stops at the first
+        // preset wide enough. Confirmed via about:webrtc/webrtc-internals on test-berlin:
+        // framesPerSecond pinned at 15 with qualityLimitationReason "none" (not bandwidth).
+        screenShareEncoding: ScreenSharePresets.h1080fps30.encoding,
       },
       videoCaptureDefaults: {
         deviceId: userConfig.videoDeviceId ?? undefined,
