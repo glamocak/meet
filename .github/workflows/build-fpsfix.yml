@@ -24,4 +24,4 @@ jobs:
           file: ./src/frontend/Dockerfile
           target: frontend-production
           push: true
-          tags: ghcr.io/glamocak/meet-frontend:v1.36.3-fpsfix
+          tags: ghcr.io/glamocak/meet-frontend:v1.36.3-fpsfix2
