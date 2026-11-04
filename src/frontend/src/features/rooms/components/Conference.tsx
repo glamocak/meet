@@ -112,6 +112,7 @@ export const Conference = ({
       dynacast: true,
       publishDefaults: {
         videoCodec: apiConfig?.livekit.default_video_codec ?? 'vp9',
+        screenShareEncoding: { maxBitrate: 16_000_000, maxFramerate: 30 }, // cilja 4K monitore; GCC realno ogranicava ko nema propusnost
       },
       videoCaptureDefaults: {
         deviceId: userConfig.videoDeviceId ?? undefined,
