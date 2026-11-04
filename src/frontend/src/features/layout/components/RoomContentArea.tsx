@@ -7,7 +7,6 @@ import { useSubtitles } from '@/features/subtitle/hooks/useSubtitles'
 import { useSidePanel } from '@/features/rooms/livekit/hooks/useSidePanel'
 import { Subtitles } from '@/features/subtitle/component/Subtitles'
 import { MainNotificationToast } from '@/features/notifications/MainNotificationToast'
-import { useReactionsToolbar } from '@/features/reactions/hooks/useReactionsToolbar'
 
 const RoomViewport = styled(
   'div',
@@ -15,8 +14,15 @@ const RoomViewport = styled(
     base: {
       position: 'absolute',
       maxHeight: '100%',
-      transition:
-        'inset .5s cubic-bezier(0.4,0,0.2,1) 5ms, padding .5s cubic-bezier(0.4,0,0.2,1) 5ms',
+      // Deliberately NOT reacting to the reaction toolbar here: that used to add
+      // paddingBottom while the toolbar was open, which shrinks this viewport and,
+      // combined with adaptiveStream's resize-observer, makes LiveKit repeatedly
+      // re-request a lower-quality layer for any screen share/video every time
+      // someone opens the toolbar or a reaction animates through it. The toolbar
+      // renders as its own floating overlay (ControlBar.tsx), so it already sits
+      // on top of the video without this padding - this just stops the video
+      // viewport itself from resizing because of it.
+      transition: 'inset .5s cubic-bezier(0.4,0,0.2,1) 5ms',
     },
     variants: {
       isSidePanelOpen: {
@@ -25,15 +31,6 @@ const RoomViewport = styled(
         },
         false: {
           inset: `var(--lk-grid-gap) var(--lk-grid-gap) calc(var(--sizes-room-control-bar))`,
-        },
-      },
-      isReactionToolbarOpen: {
-        true: {
-          paddingBottom:
-            'calc(var(--sizes-room-reaction-toolbar-height) + calc(var(--lk-grid-gap) / 2))',
-        },
-        false: {
-          paddingBottom: '0',
         },
       },
     },
@@ -69,13 +66,9 @@ interface RoomContentAreaProps {
 export function RoomContentArea({ children }: RoomContentAreaProps) {
   const { isSidePanelOpen } = useSidePanel()
   const { areSubtitlesOpen } = useSubtitles()
-  const { isOpen: isReactionToolbarOpen } = useReactionsToolbar()
 
   return (
-    <RoomViewport
-      isSidePanelOpen={isSidePanelOpen}
-      isReactionToolbarOpen={isReactionToolbarOpen}
-    >
+    <RoomViewport isSidePanelOpen={isSidePanelOpen}>
       <TrackAreaContainer areSubtitlesOpen={areSubtitlesOpen}>
         {children}
       </TrackAreaContainer>
