@@ -19,6 +19,18 @@ type Props = Omit<
   Pick<NonNullable<ButtonRecipeProps>, 'variant'> &
   ToggleButtonProps
 
+const getScreenShareEncoding = () => {
+  const pixelRatio = window.devicePixelRatio || 1
+  const screenPixels =
+    window.screen.width * pixelRatio * (window.screen.height * pixelRatio)
+  const fullHdPixels = 1920 * 1080
+  const scale = Math.max(1, screenPixels / fullHdPixels)
+  return {
+    maxBitrate: Math.round(6_000_000 * scale),
+    maxFramerate: 30,
+  }
+}
+
 export const ScreenShareToggle = ({
   variant = 'primaryDark',
   onPress,
@@ -29,6 +41,7 @@ export const ScreenShareToggle = ({
     ...props,
     source: Track.Source.ScreenShare,
     captureOptions: { audio: true, selfBrowserSurface: 'include' },
+    publishOptions: { screenShareEncoding: getScreenShareEncoding() },
   })
 
   const tooltipLabel = enabled ? 'stop' : 'start'
