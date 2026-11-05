@@ -40,7 +40,7 @@ export const ScreenShareToggle = ({
   const { buttonProps, enabled } = useTrackToggle({
     ...props,
     source: Track.Source.ScreenShare,
-    captureOptions: { audio: true, selfBrowserSurface: 'include' },
+    captureOptions: { audio: true, selfBrowserSurface: 'include', resolution: { width: 3840, height: 2160, frameRate: 30 } },
     publishOptions: { screenShareEncoding: getScreenShareEncoding() },
   })
 
